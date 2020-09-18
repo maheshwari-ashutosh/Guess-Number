@@ -1,21 +1,53 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Header from './components/Header';
+import GameOver from './screens/GameOver';
+import PlayGame from './screens/PlayGame';
+import StartGame from './screens/StartGame';
 
 export default function App() {
+
+  const [selectedNumber, setSelectedNumber] = useState(-1);
+  const [chances, setChances] = useState(-1);
+
+  const startGameHandler = (number: number) => {
+    setSelectedNumber(number);
+  }
+
+  const restartGameHandler = () => {
+    setSelectedNumber(-1);
+    setChances(-1);
+  }
+
+  const gameOverHandler = (chances:number):void => {
+    setChances(chances);
+  }
+
+  let screen = <StartGame onGameStart={startGameHandler} />;
+
+  if(selectedNumber !== -1) {
+    console.log(selectedNumber);
+    screen = <PlayGame selectedNumber={selectedNumber} onGameOver={gameOverHandler} onRestartGame={restartGameHandler}/>
+  }
+
+  if(chances !== -1) {
+    screen = <GameOver chances={chances} onGameRestart={restartGameHandler} />
+  }
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <StatusBar style='auto' />
+      <Header title="Guess a Number" />
+      {screen}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1,
   },
 });
